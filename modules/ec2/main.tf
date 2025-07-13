@@ -5,22 +5,6 @@ resource "aws_instance" "pokemon_game" {
   vpc_security_group_ids = var.vpc_security_group_ids
   iam_instance_profile   = "LabInstanceProfile" # Attach existing profile here
 
-  # user_data = <<-EOF
-  #   #!/bin/bash
-  #   cd /home/ubuntu
-  #   git clone https://github.com/WhiskersStack/PokemonWithDynamoDB.git
-  #   chown -R ubuntu:ubuntu /home/ubuntu/PokemonWithDynamoDB
-  #   echo 'if [ -n "$SSH_CONNECTION" ]; then cd ~/PokemonWithDynamoDB && python3 main.py; fi' >> /home/ubuntu/.bashrc
-  # EOF
-
-  # This allows Terraform to SSH into your instance
-  # connection {
-  #   type        = "ssh"
-  #   user        = "ubuntu"                             # or "ec2-user" for Amazon Linux
-  #   private_key = file("${path.module}/MyKeyPair.pem") # Reads the private SSH key file
-  #   host        = self.public_ip                       # The EC2 public IP
-  # }
-
   provisioner "file" {
     source      = local_file.private_key.filename
     destination = "/home/ubuntu/MyKeyPair.pem"
@@ -45,12 +29,6 @@ resource "aws_instance" "pokemon_game" {
     destination = "/tmp/init.sh"
   }
 
-  # Add MyKeyPair.pem to the instance
-  # provisioner "file" {
-  #   source      = "${path.module}/MyKeyPair.pem"
-  #   destination = "/home/ubuntu/MyKeyPair.pem"
-  # }
-
   provisioner "file" {
     source      = "${path.module}/pokemon-ansible"
     destination = "/home/ubuntu/pokemon-ansible"
@@ -60,7 +38,7 @@ resource "aws_instance" "pokemon_game" {
     source      = "${path.module}/pokemon-ansible/inventory.ini"
     destination = "/home/ubuntu/pokemon-ansible/inventory.ini"
   }
-  
+
   # Runs the script remotely via SSH
   provisioner "remote-exec" {
     inline = [
@@ -93,8 +71,8 @@ resource "tls_private_key" "my_key" {
 }
 
 resource "local_file" "private_key" {
-  content  = tls_private_key.my_key.private_key_pem
-  filename = "${path.module}/MyKeyPair.pem"
+  content         = tls_private_key.my_key.private_key_pem
+  filename        = "${path.module}/MyKeyPair.pem"
   file_permission = "0400"
 }
 

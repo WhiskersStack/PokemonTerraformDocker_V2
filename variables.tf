@@ -8,11 +8,3 @@ variable "instance_type" {
   type        = string
   default     = "t3.medium" # Example instance type, replace with your own
 }
-# variable "tags" {
-#   description = "Tags to apply to the instance"
-#   type        = map(string)
-#   default = {
-#     Name = "PokemonGame" # Default tag, can be overridden
-#   }
-# }
-
