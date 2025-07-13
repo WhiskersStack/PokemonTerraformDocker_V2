@@ -12,10 +12,11 @@ resource "aws_security_group" "this" {
   }
 
   ingress {
-    description = "Port 5000 for mongoDB"
-    from_port   = 5000
-    to_port     = 5000
-    protocol    = "tcp"
+    description     = "Allow MongoDB from game SG"
+    from_port       = 27017
+    to_port         = 27017
+    protocol        = "tcp"
+    security_groups = var.allowed_source_sg_ids
   }
 
   egress {

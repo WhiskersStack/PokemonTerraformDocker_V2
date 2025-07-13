@@ -13,3 +13,7 @@ variable "ssh_cidr" {
   type        = string
   default     = "0.0.0.0/0"
 }
+variable "allowed_source_sg_ids" {
+  description = "Security group IDs allowed to reach MongoDB (27017)"
+  type        = list(string)
+}
