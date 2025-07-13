@@ -12,12 +12,13 @@ resource "aws_security_group" "this" {
   }
 
   ingress {
-    description     = "Allow MongoDB from game SG"
-    from_port       = 27017
-    to_port         = 27017
+    description     = "Allow Flask API (5000) from game SG"
+    from_port       = 5000
+    to_port         = 5000
     protocol        = "tcp"
     security_groups = var.allowed_source_sg_ids
   }
+
 
   egress {
     from_port   = 0

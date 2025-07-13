@@ -18,14 +18,14 @@ module "security_group" {
   ssh_cidr = "0.0.0.0/0"
 }
 
-# Module for security group allowing MongoDB access
-# This security group allows access from the security group created above
-# and allows SSH access from anywhere.
+# Module for security group allowing database access
+# This module creates a security group that allows access to the database from specified security groups.
+# It allows SSH access and also allows the Flask API to be accessed from the game security group
 module "security_group_db" {
-  source                 = "./modules/security_group_db"
-  name                   = "allow_db_access"
-  vpc_id                 = data.aws_vpc.default.id
-  allowed_source_sg_ids  = [module.security_group.security_group_id]
+  source                = "./modules/security_group_db"
+  name                  = "allow_db_access"
+  vpc_id                = data.aws_vpc.default.id
+  allowed_source_sg_ids = [module.security_group.security_group_id] # game SG
 }
 
 # Module for EC2 instance setup

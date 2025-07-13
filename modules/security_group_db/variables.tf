@@ -14,6 +14,6 @@ variable "ssh_cidr" {
   default     = "0.0.0.0/0"
 }
 variable "allowed_source_sg_ids" {
-  description = "Security group IDs allowed to reach MongoDB (27017)"
+  description = "SGs that can call the Flask API on port 5000"
   type        = list(string)
 }
