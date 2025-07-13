@@ -26,6 +26,19 @@ echo "[INFO] Running playbook..."
 #ansible-playbook -i inventory.ini pokemon_stack.yml
 ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i inventory.ini pokemon_stack.yml
 
+
+
+
+
+
+
+
+
+
+
+
+# *****************************************************************************
+
 ###############################################################################
 
 # Game setup
