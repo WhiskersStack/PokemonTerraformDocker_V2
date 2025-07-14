@@ -39,8 +39,12 @@ module "ec2" {
 }
 
 # Output the public IP of the EC2 instance
-output "ssh_command" {
-  value = "cd to modules/ec2 and run : ssh -i MyKeyPair.pem ubuntu@${module.ec2.public_ip}"
+output "Instance_1_ssh" {
+  value = "ssh -o StrictHostKeyChecking=no -i MyKeyPair.pem ubuntu@${module.ec2.public_ip}"
+}
+
+output "Instance_2_ssh" {
+  value = "ssh -o StrictHostKeyChecking=no -i MyKeyPair.pem ubuntu@${module.ec2.db_public_ip}"
 }
 
 # Local file resource to create Ansible inventory file

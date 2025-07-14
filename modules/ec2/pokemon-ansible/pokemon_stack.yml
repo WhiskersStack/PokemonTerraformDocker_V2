@@ -44,8 +44,6 @@
       copy:
         dest: /home/ubuntu/pokemon-stack/.env
         content: |
-          MONGO_INITDB_ROOT_USERNAME=admin
-          MONGO_INITDB_ROOT_PASSWORD=123123
           MONGO_DB=pokemon
 
     - name: Create docker-compose.yml
@@ -57,7 +55,6 @@
             mongodb:
               image: mongo:7
               restart: always
-              env_file: .env
               environment:
                 MONGO_INITDB_DATABASE: "${MONGO_DB}"
               volumes:
@@ -70,7 +67,7 @@
               restart: always
               env_file: .env
               environment:
-                MONGO_URI: "mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017/${MONGO_DB}?authSource=admin"
+                MONGO_URI: "mongodb://mongodb:27017/${MONGO_DB}"
               ports:
                 - "5000:5000"
               depends_on:
@@ -107,7 +104,7 @@
       copy:
         dest: /home/ubuntu/pokemon-stack/app/main.py
         content: |
-          from flask import Flask, jsonify
+          from flask import Flask, jsonify, request
           from pymongo import MongoClient
           import os
 
@@ -122,6 +119,19 @@
                   return jsonify(status="ok"), 200
               except:
                   return jsonify(status="mongo unreachable"), 500
+
+          @app.route("/pokemon", methods=["GET"])
+          def get_all_pokemon():
+              docs = list(db.pokemon.find({}, {"_id": 0}))
+              return jsonify(docs)
+
+          @app.route("/pokemon", methods=["POST"])
+          def upsert_pokemon():
+              data = request.get_json()
+              if not data or "id" not in data:
+                  return jsonify(error="Missing 'id' field"), 400
+              db.pokemon.update_one({"id": data["id"]}, {"$set": data}, upsert=True)
+              return jsonify(result="upserted", id=data["id"])
 
           @app.route("/pokemon/<int:poke_id>")
           def get_pokemon(poke_id):
@@ -155,4 +165,3 @@
 
     - name: Show health check result
       debug:
-        var: flask_health.content
